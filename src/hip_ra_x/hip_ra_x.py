@@ -190,7 +190,7 @@ class HIP_RA_X:
         )
         self.fluid_heat_capacity: Parameter = parameter_dict_entry(
             floatParameter(
-                'Fluid Heat Capacity',
+                'Fluid Specific Heat Capacity',
                 value=-1.0,
                 Min=3.0,
                 Max=10.0,
@@ -347,19 +347,19 @@ class HIP_RA_X:
             CurrentUnits=MassUnit.KILOGRAM,
         )
         self.reservoir_enthalpy = self.OutputParameterDict[self.reservoir_enthalpy.Name] = OutputParameter(
-            Name='Enthalpy (reservoir)',
+            Name='Specific Enthalpy (reservoir)',
             UnitType=Units.ENTHALPY,
             PreferredUnits=EnthalpyUnit.KJPERKG,
             CurrentUnits=EnthalpyUnit.KJPERKG,
         )
         self.enthalpy_rock = self.OutputParameterDict[self.enthalpy_rock.Name] = OutputParameter(
-            Name='Enthalpy (rock)',
+            Name='Specific Enthalpy (rock)',
             UnitType=Units.ENTHALPY,
             PreferredUnits=EnthalpyUnit.KJPERKG,
             CurrentUnits=EnthalpyUnit.KJPERKG,
         )
         self.enthalpy_fluid = self.OutputParameterDict[self.enthalpy_fluid.Name] = OutputParameter(
-            Name='Enthalpy (fluid)',
+            Name='Specific Enthalpy (fluid)',
             UnitType=Units.ENTHALPY,
             PreferredUnits=EnthalpyUnit.KJPERKG,
             CurrentUnits=EnthalpyUnit.KJPERKG,
@@ -577,9 +577,9 @@ class HIP_RA_X:
                     f'({self.fluid_density.value}) was less than min ({self.fluid_density.Min})'
                 )
 
-                density_water = DensityWater(self.reservoir_temperature.value)
+                density_water_kg_per_m3 = DensityWater(self.reservoir_temperature.value)
 
-                self.fluid_density.value = density_water * 1_000_000_000.0  # converted to kg/km3
+                self.fluid_density.value = density_water_kg_per_m3 * 1_000_000_000.0  # converted to kg/km3
 
             self.mass_rock.value = self.volume_rock.value * self.rock_density.value
             self.mass_recoverable_fluid.value = self.volume_recoverable_fluid.value * self.fluid_density.value
@@ -592,9 +592,9 @@ class HIP_RA_X:
                 )
 
                 self.fluid_heat_capacity.value = (
-                    # converted to kJ/(kg·K)
                     HeatCapacityWater(self.reservoir_temperature.value)
                     / 1000.0
+                    # converted to kJ/(kg·K)
                 )
 
             rejection_temperature_k = celsius_to_kelvin(self.rejection_temperature.value)
@@ -614,10 +614,10 @@ class HIP_RA_X:
             # fmt: on
 
             self.stored_heat_rock.value = (
-                # result in kJ
                 self.recoverable_rock_heat.value
                 * self.enthalpy_rock.value
                 * self.mass_rock.value
+                # result in kJ
             )
             self.stored_heat_fluid.value = fluid_net_enthalpy * self.mass_recoverable_fluid.value  # result in kJ
             self.reservoir_stored_heat.value = self.stored_heat_rock.value + self.stored_heat_fluid.value
@@ -662,8 +662,6 @@ class HIP_RA_X:
             self.reservoir_producible_electricity.value = (
                 HIP_RA_X._ureg.Quantity(producible_power_kW, 'kW').to('MW').magnitude
             )
-
-            self.heat_per_unit_area_fluid.value = self.reservoir_producible_heat.value / self.reservoir_area.value
 
             self.electricity_per_unit_area_fluid.value = (
                 self.producible_electricity_fluid.value / self.reservoir_area.value
@@ -722,6 +720,8 @@ class HIP_RA_X:
             summary_of_results = {}
 
             for param, render in [
+                # TODO: Commented parameters are defined in initialization but not calculated - either calculate or
+                #   remove entirely
                 (self.reservoir_temperature, render_default),
                 (self.reservoir_volume, render_default),
                 (self.volume_rock, render_default),
@@ -729,42 +729,42 @@ class HIP_RA_X:
                 (self.reservoir_stored_heat, render_scientific),
                 (self.stored_heat_rock, render_scientific),
                 (self.stored_heat_fluid, render_scientific),
-                (self.reservoir_mass, render_scientific),
+                # (self.reservoir_mass, render_scientific),
                 (self.mass_rock, render_scientific),
                 (self.mass_recoverable_fluid, render_scientific),
                 (self.reservoir_enthalpy, render_default),
                 (self.enthalpy_rock, render_default),
                 (self.enthalpy_fluid, render_default),
-                (self.wellhead_heat, render_scientific),
-                (self.wellhead_heat_recovery_rock, render_scientific),
-                (self.wellhead_heat_recovery_fluid, render_scientific),
+                # (self.wellhead_heat, render_scientific),
+                # (self.wellhead_heat_recovery_rock, render_scientific),
+                # (self.wellhead_heat_recovery_fluid, render_scientific),
                 (
                     self.reservoir_recovery_factor,
                     lambda rg: f'{(100 * rg.value):10.2f} {self.reservoir_recovery_factor.CurrentUnits.value}',
                 ),
-                (
-                    self.recovery_factor_rock,
-                    lambda rg: f'{(100 * rg.value):10.2f} {self.recovery_factor_rock.CurrentUnits.value}',
-                ),
-                (
-                    self.recovery_factor_fluid,
-                    lambda rg: f'{(100 * rg.value):10.2f} {self.recovery_factor_fluid.CurrentUnits.value}',
-                ),
+                # (
+                #     self.recovery_factor_rock,
+                #     lambda rg: f'{(100 * rg.value):10.2f} {self.recovery_factor_rock.CurrentUnits.value}',
+                # ),
+                # (
+                #     self.recovery_factor_fluid,
+                #     lambda rg: f'{(100 * rg.value):10.2f} {self.recovery_factor_fluid.CurrentUnits.value}',
+                # ),
                 (self.reservoir_available_heat, render_scientific),
-                (self.available_heat_rock, render_scientific),
-                (self.available_heat_fluid, render_scientific),
+                # (self.available_heat_rock, render_scientific),
+                # (self.available_heat_fluid, render_scientific),
                 (self.reservoir_producible_heat, render_scientific),
-                (self.producible_heat_rock, render_scientific),
-                (self.producible_heat_fluid, render_scientific),
+                # (self.producible_heat_rock, render_scientific),
+                # (self.producible_heat_fluid, render_scientific),
                 (self.producible_heat_per_unit_area, render_scientific),
-                (self.heat_per_unit_area_rock, render_scientific),
-                (self.heat_per_unit_area_fluid, render_scientific),
+                # (self.heat_per_unit_area_rock, render_scientific),
+                # (self.heat_per_unit_area_fluid, render_scientific),
                 (self.reservoir_producible_electricity, render_default),
-                (self.producible_electricity_rock, render_default),
-                (self.producible_electricity_fluid, render_default),
+                # (self.producible_electricity_rock, render_default),
+                # (self.producible_electricity_fluid, render_default),
                 (self.producible_electricity_per_unit_area, render_default),
-                (self.electricity_per_unit_area_rock, render_default),
-                (self.electricity_per_unit_area_fluid, render_default),
+                # (self.electricity_per_unit_area_rock, render_default),
+                # (self.electricity_per_unit_area_fluid, render_default),
             ]:
                 summary_of_results[param.Name] = render(param)
 
