@@ -318,6 +318,7 @@ class HipRaXTestCase(BaseTestCase):
         hip_ra.OutputParameterDict['Stored Heat (reservoir)'].PreferredUnits = HeatUnit.J
 
         hip_ra.OutputParameterDict['Specific Enthalpy (reservoir)'].PreferredUnits = EnthalpyUnit.KJPERKG
+
         hip_ra.OutputParameterDict['Wellhead Heat (reservoir)'].PreferredUnits = HeatUnit.J
         hip_ra.OutputParameterDict['Recovery Factor (reservoir)'].PreferredUnits = PercentUnit.PERCENT
         hip_ra.OutputParameterDict['Available Heat (reservoir)'].PreferredUnits = HeatUnit.J
