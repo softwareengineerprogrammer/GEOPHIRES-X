@@ -660,10 +660,11 @@ class HIP_RA_X:
 
             self.logger.info(f'Complete {__class__!s}: {__class__.__name__!s}: {__name__}')
         except Exception as e:
-            self.logger.error(f'Error occurred during calculations: {e!s}')
+            msg = f'Error occurred during calculations: {e!s}'
+            self.logger.error(msg)
             traceback.print_exc()
 
-            # FIXME raise exception
+            raise RuntimeError(msg) from e
 
     def PrintOutputs(self):
         """
