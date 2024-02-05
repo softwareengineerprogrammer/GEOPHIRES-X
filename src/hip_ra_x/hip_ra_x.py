@@ -571,8 +571,12 @@ class HIP_RA_X:
                 # so we multiply by the recoverable fluid factor
             )
 
-            # calculate the mass of the rock and the fluid in the reservoir
-            if not self.fluid_density.Provided:
+            if self.fluid_density.value < self.fluid_density.Min:
+                self.logger.info(
+                    f'Deriving value of {self.fluid_density.Name} because provided value '
+                    f'({self.fluid_density.value}) was less than min ({self.fluid_density.Min})'
+                )
+
                 density_water = DensityWater(self.reservoir_temperature.value)
 
                 self.fluid_density.value = density_water * 1_000_000_000.0  # converted to kg/km3
@@ -581,8 +585,12 @@ class HIP_RA_X:
             self.mass_recoverable_fluid.value = self.volume_recoverable_fluid.value * self.fluid_density.value
             self.reservoir_mass.value = self.mass_rock.value + self.mass_recoverable_fluid.value
 
-            # do all the simple calculations and look-ups only once
-            if not self.fluid_heat_capacity.Provided:
+            if self.fluid_heat_capacity.value < self.fluid_heat_capacity.Min:
+                self.logger.info(
+                    f'Deriving value of {self.fluid_heat_capacity.Name} because provided value '
+                    f'({self.fluid_heat_capacity.value}) was less than min ({self.fluid_heat_capacity.Min})'
+                )
+
                 self.fluid_heat_capacity.value = (
                     # converted to kJ/(kg·K)
                     HeatCapacityWater(self.reservoir_temperature.value)
@@ -592,8 +600,6 @@ class HIP_RA_X:
             rejection_temperature_k = celsius_to_kelvin(self.rejection_temperature.value)
             reservoir_temperature_k = celsius_to_kelvin(self.reservoir_temperature.value)
             delta_temperature_k = reservoir_temperature_k - rejection_temperature_k
-            # rejection_entropy = EntropyH20_func(self.rejection_temperature.value)
-            # rejection_enthalpy = EnthalpyH20_func(self.rejection_temperature.value)
             fluid_net_enthalpy = fluid_net_enthalpy = EnthalpyH20_func(
                 self.reservoir_temperature.value
             ) - EnthalpyH20_func(self.rejection_temperature.value)
@@ -627,8 +633,11 @@ class HIP_RA_X:
             )
             self.enthalpy_fluid.value = fluid_exergy_kJ_per_kg
 
+            self.reservoir_enthalpy.value = self.enthalpy_rock.value + self.enthalpy_fluid.value
+
             # (equation 8 in Garg and Combs(2011))
             maximum_lifetime_electricity_kJ = amount_fluid_produced_kg * fluid_exergy_kJ_per_kg
+            self.reservoir_available_heat.value = maximum_lifetime_electricity_kJ
 
             # (with conversion efficiency obtained from the function “RecoverableHeat” [however, note that I find
             # RecoverableHeat a confusing name as it represents the amount of exergy that can be converted to
@@ -637,15 +646,20 @@ class HIP_RA_X:
             # which is the basis for the “RecoverableHeat” function. They also call this property
             # utilization_efficiency or 2nd law based efficiency)
             conversion_efficiency = RecoverableHeat(self.reservoir_temperature.value)
-            producible_lifetime_electricity_kj = maximum_lifetime_electricity_kJ * conversion_efficiency
-            self.reservoir_producible_heat.value = producible_lifetime_electricity_kj
+            producible_lifetime_electricity_kJ = maximum_lifetime_electricity_kJ * conversion_efficiency
+            self.reservoir_producible_heat.value = producible_lifetime_electricity_kJ
 
-            # Now assuming a 30 year lifetime:
+            self.reservoir_recovery_factor.value = (
+                self.reservoir_producible_heat.value / self.reservoir_stored_heat.value
+            )
+
+            # Now assuming a 30-year lifetime:
             plant_lifetime_years = 30
             maximum_power_kW = maximum_lifetime_electricity_kJ / (plant_lifetime_years * 365 * 24 * 3600)
+
             electricity_with_actual_power_plant_kW = UtilEff_func(self.reservoir_temperature.value) * maximum_power_kW
             producible_power_kW = electricity_with_actual_power_plant_kW
-            self.producible_electricity_fluid.value = (
+            self.reservoir_producible_electricity.value = (
                 HIP_RA_X._ureg.Quantity(producible_power_kW, 'kW').to('MW').magnitude
             )
 
@@ -657,6 +671,8 @@ class HIP_RA_X:
             self.producible_electricity_per_unit_area.value = (
                 self.reservoir_producible_electricity.value / self.reservoir_area.value
             )
+
+            self.producible_heat_per_unit_area.value = self.reservoir_producible_heat.value / self.reservoir_area.value
 
             self.logger.info(f'Complete {__class__!s}: {__class__.__name__!s}: {__name__}')
         except Exception as e:
