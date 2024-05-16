@@ -42,10 +42,18 @@ class JediGeothermalInputParameters:
     # TODO define all input parameters
 
 
+def get_construction_period_total_jobs(input_params):
+    return input_params.construction_period_months * input_params.nominal_plant_size_mw_net_output
+
+
 class JediGeothermalClient:
     def __init__(self):
         self._logger = _logger
 
     def get_jedi_geothermal_result(self, input_params: JediGeothermalInputParameters) -> JediGeothermalResult:
         self._logger.info(f'Calculating JEDI result for: {input_params}')
-        raise NotImplementedError('Implement me please! =]')
+        result: JediGeothermalResult = JediGeothermalResult()
+
+        result.construction_period_total_jobs = get_construction_period_total_jobs(input_params)
+
+        return result

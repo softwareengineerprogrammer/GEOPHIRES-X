@@ -11,10 +11,14 @@ class JediGeothermalTest(BaseTestCase):
 
         input_params = JediGeothermalInputParameters()
         input_params.resource_depth_m = 2250
+        input_params.construction_period_months = 15
+        input_params.nominal_plant_size_mw_net_output = 25
         # TODO define rest of input_params properties
 
         result: JediGeothermalResult = client.get_jedi_geothermal_result(input_params)
         self.assertIsNotNone(result)
+        print(result)
+        print(f'Total jobs: {result.construction_period_total_jobs}')
 
         # TODO assert result properties are calculated from inputs correctly
         # i.e.
