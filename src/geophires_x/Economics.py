@@ -1502,7 +1502,46 @@ class Economics:
             DefaultValue=2.13,
             UnitType=Units.NONE,
             Required=False,
-            ToolTipText="Estimated jobs created per MW of electricity produced, per https://geothermal.org/resources/geothermal-basics"
+            ToolTipText="Estimated jobs created per MW of electricity produced, "
+                        "per https://geothermal.org/resources/geothermal-basics"
+        )
+
+        self.property_tax_per_MW_electricity = self.ParameterDict[
+            self.property_tax_per_MW_electricity.Name] = floatParameter(
+            "Estimated Property Tax per MW of Electricity Produced",
+            DefaultValue=0.210,
+            UnitType=Units.CURRENCY,
+            #UnitType=Units.ROYALTY_PER_ENERGY,
+            # PreferredUnits=RoyaltyPerEnergyUnit.ROYALTYPERMW,
+            # CurrentUnits=RoyaltyPerEnergyUnit.ROYALTYPERMW,
+            Required=False,
+            ToolTipText="Estimated property tax per MW of electricity produced, "
+                        "per https://geothermal.org/resources/geothermal-basics"
+        )
+
+        self.gov_royalty_per_MW_electricity = self.ParameterDict[
+            self.gov_royalty_per_MW_electricity.Name] = floatParameter(
+            "Estimated Governmental Royalty per MW of Electricity Produced (MUSD/MW)",
+            DefaultValue=0.315,
+            UnitType=Units.CURRENCY,
+            # UnitType=Units.ROYALTY_PER_ENERGY,
+            # PreferredUnits=RoyaltyPerEnergyUnit.ROYALTYPERMW,
+            # CurrentUnits=RoyaltyPerEnergyUnit.ROYALTYPERMW,
+            Required=False,
+            ToolTipText="Estimated governmental royalties per MW of electricity produced, "
+                        "per https://geothermal.org/resources/geothermal-basics"
+        )
+
+        self.total_royalty_per_MW_electricity = self.ParameterDict[
+            self.total_royalty_per_MW_electricity.Name] = floatParameter(
+            "Estimated Royalties per MW of Electricity Produced (MUSD/MW)",
+            DefaultValue=0.420,
+            # UnitType=Units.ROYALTY_PER_ENERGY,
+            # PreferredUnits=RoyaltyPerEnergyUnit.ROYALTYPERMW,
+            # CurrentUnits=RoyaltyPerEnergyUnit.ROYALTYPERMW,
+            Required=False,
+            ToolTipText="Estimated total royalties per MW of electricity produced, "
+                        "per https://geothermal.org/resources/geothermal-basics"
         )
 
         # local variable initialization
@@ -1814,9 +1853,29 @@ class Economics:
             PreferredUnits=CurrencyUnit.MDOLLARS,
             CurrentUnits=CurrencyUnit.MDOLLARS
         )
+
         self.jobs_created = self.OutputParameterDict[self.jobs_created.Name] = OutputParameter(
             Name="Estimated Jobs Created",
             UnitType=Units.NONE,
+        )
+
+        self.property_tax_revenue = self.OutputParameterDict[self.property_tax_revenue.Name] = OutputParameter(
+            Name="Estimated Lifetime Property Tax Revenue",
+            UnitType=Units.CURRENCY,
+            CurrentUnits=CurrencyUnit.MDOLLARS,
+            PreferredUnits=CurrencyUnit.MDOLLARS
+        )
+        self.royalties_total = self.OutputParameterDict[self.royalties_total.Name] = OutputParameter(
+            Name="Estimated Lifetime Total Royalties",
+            UnitType=Units.CURRENCY,
+            CurrentUnits=CurrencyUnit.MDOLLARS,
+            PreferredUnits=CurrencyUnit.MDOLLARS
+        )
+        self.royalties_governmental = self.OutputParameterDict[self.royalties_governmental.Name] = OutputParameter(
+            Name="Estimated Lifetime Governmental Royalties",
+            UnitType=Units.CURRENCY,
+            CurrentUnits=CurrencyUnit.MDOLLARS,
+            PreferredUnits=CurrencyUnit.MDOLLARS
         )
 
         model.logger.info(f'Complete {__class__!s}: {sys._getframe().f_code.co_name}')
@@ -2850,10 +2909,22 @@ class Economics:
         # Calculate LCOE/LCOH
         self.LCOE.value, self.LCOH.value, self.LCOC.value = CalculateLCOELCOHLCOC(self, model)
 
-        # https://github.com/NREL/GEOPHIRES-X/issues/232
+        # Jobs/property tax/royalties - https://github.com/NREL/GEOPHIRES-X/issues/232
         self.jobs_created.value = round(
             np.average(model.surfaceplant.ElectricityProduced.quantity().to(
                 'MW').magnitude * self.jobs_created_per_MW_electricity.value))
+
+        self.property_tax_revenue.value = (
+            np.average(model.surfaceplant.ElectricityProduced.quantity().to(
+                'MW').magnitude * self.property_tax_per_MW_electricity.value))
+
+        self.royalties_total.value = (
+            np.average(model.surfaceplant.ElectricityProduced.quantity().to(
+                'MW').magnitude * self.total_royalty_per_MW_electricity.value))
+
+        self.royalties_governmental.value = (
+            np.average(model.surfaceplant.ElectricityProduced.quantity().to(
+                'MW').magnitude * self.gov_royalty_per_MW_electricity.value))
 
         model.logger.info(f'complete {__class__!s}: {sys._getframe().f_code.co_name}')
 

@@ -1641,7 +1641,22 @@ class Outputs:
                     f.write(f'      CHP: Percent cost allocation for electrical plant: {model.economics.CAPEX_heat_electricity_plant_ratio.value*100.0:10.2f} %\n')
 
                 if model.surfaceplant.enduse_option.value in [EndUseOptions.ELECTRICITY]:
-                    f.write(f'      Estimated Jobs Created:                                 {model.economics.jobs_created.value}\n')
+                    f.write(
+                        f'      {model.economics.jobs_created.Name}:                                 '
+                            f'{model.economics.jobs_created.value}\n'
+                    )
+                    f.write(
+                        f'         {model.economics.property_tax_revenue.Name}:     '
+                        f'{model.economics.property_tax_revenue.value:10.2f} {model.economics.property_tax_revenue.CurrentUnits.value}\n'
+                    )
+                    f.write(
+                        f'         {model.economics.royalties_total.Name}:  '
+                        f'{model.economics.royalties_total.value:10.2f} {model.economics.royalties_total.CurrentUnits.value}\n'
+                    )
+                    f.write(
+                        f'         {model.economics.royalties_governmental.Name}:    '
+                        f'{model.economics.royalties_governmental.value:10.2f} {model.economics.royalties_governmental.CurrentUnits.value}\n'
+                    )
 
 
                 f.write(NL)
