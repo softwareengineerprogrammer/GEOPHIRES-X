@@ -4,10 +4,10 @@
 
 Simulation Metadata
 ----------------------
- GEOPHIRES Version: 3.4.34
- Simulation Date: 2024-06-19
- Simulation Time:  07:43
- Calculation Time:      0.587 sec
+ GEOPHIRES Version: 3.4.40
+ Simulation Date: 2024-06-27
+ Simulation Time:  08:21
+ Calculation Time:      0.593 sec
 
                            ***SUMMARY OF RESULTS***
 
@@ -34,6 +34,9 @@ Simulation Metadata
       Project MOIC:                                         -0.20
       Project Payback Period:                          N/A
       Estimated Jobs Created:                                 12
+         Estimated Lifetime Property Tax Revenue:           1.17 MUSD
+         Estimated Lifetime Total Royalties:        2.35 MUSD
+         Estimated Lifetime Governmental Royalties:          1.76 MUSD
 
                           ***ENGINEERING PARAMETERS***
 

@@ -72,6 +72,9 @@ class GeophiresXResult:
                 'Project Payback Period',
                 'CHP: Percent cost allocation for electrical plant',
                 'Estimated Jobs Created',
+                'Estimated Lifetime Property Tax Revenue',
+                'Estimated Lifetime Total Royalties',
+                'Estimated Lifetime Governmental Royalties',
             ],
             'EXTENDED ECONOMICS': [
                 'Adjusted Project LCOE (after incentives, grants, AddOns,etc)',
