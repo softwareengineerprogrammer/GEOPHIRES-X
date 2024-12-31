@@ -62,12 +62,18 @@ class GeophiresInputParameters:
                 f.writelines([', '.join([str(p) for p in param_item]) + '\n' for param_item in self._params.items()])
 
         self._id = hash(self._file_path)
+        self._output_file_path: Path = None
 
     def as_file_path(self):
         return self._file_path
 
     def get_output_file_path(self):
-        return Path(tempfile.gettempdir(), f'geophires-result_{self._id}.out')
+        if self._output_file_path is None:
+            base_name = f'_geophires-result_{self._id}.out'
+            tf = tempfile.NamedTemporaryFile(delete=False, suffix=base_name)
+            self._output_file_path = Path(tf.name)
+
+        return self._output_file_path
 
     def as_text(self):
         with open(self.as_file_path(), encoding='UTF-8') as f:
