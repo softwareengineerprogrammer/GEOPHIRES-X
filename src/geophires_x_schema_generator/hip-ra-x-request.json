@@ -18,156 +18,156 @@
   "properties": {
     "Reservoir Temperature": {
       "description": "Reservoir Temperature",
-      "type": "number",
       "units": "degC",
-      "category": null,
-      "default": 150.0,
       "minimum": 50,
-      "maximum": 1000
+      "maximum": 1000,
+      "type": "number",
+      "category": null,
+      "default": 150.0
     },
     "Rejection Temperature": {
       "description": "Rejection Temperature",
-      "type": "number",
       "units": "degC",
-      "category": null,
-      "default": 25.0,
       "minimum": 0.1,
-      "maximum": 200
+      "maximum": 200,
+      "type": "number",
+      "category": null,
+      "default": 25.0
     },
     "Reservoir Porosity": {
       "description": "Reservoir Porosity",
-      "type": "number",
       "units": "%",
-      "category": null,
-      "default": 18.0,
       "minimum": 0.0,
-      "maximum": 100.0
+      "maximum": 100.0,
+      "type": "number",
+      "category": null,
+      "default": 18.0
     },
     "Reservoir Area": {
       "description": "Reservoir Area",
-      "type": "number",
       "units": "km**2",
-      "category": null,
-      "default": 81.0,
       "minimum": 0.0,
-      "maximum": 10000.0
+      "maximum": 10000.0,
+      "type": "number",
+      "category": null,
+      "default": 81.0
     },
     "Reservoir Thickness": {
       "description": "Reservoir Thickness",
-      "type": "number",
       "units": "kilometer",
-      "category": null,
-      "default": 0.286,
       "minimum": 0.0,
-      "maximum": 10000.0
+      "maximum": 10000.0,
+      "type": "number",
+      "category": null,
+      "default": 0.286
     },
     "Reservoir Life Cycle": {
       "description": "Reservoir Life Cycle",
-      "type": "integer",
       "units": "yr",
-      "category": null,
-      "default": 30,
       "minimum": 1,
-      "maximum": 100
+      "maximum": 100,
+      "type": "integer",
+      "category": null,
+      "default": 30
     },
     "Rock Heat Capacity": {
       "description": "Rock Heat Capacity",
-      "type": "number",
       "units": "kJ/km**3C",
-      "category": null,
-      "default": 2840000000000.0,
       "minimum": 0.0,
-      "maximum": 100000000000000.0
+      "maximum": 100000000000000.0,
+      "type": "number",
+      "category": null,
+      "default": 2840000000000.0
     },
     "Fluid Specific Heat Capacity": {
       "description": "Specific Heat Capacity Of Water",
-      "type": "number",
       "units": "kJ/kgC",
-      "category": null,
-      "default": -1.0,
       "minimum": 3.0,
-      "maximum": 10.0
+      "maximum": 10.0,
+      "type": "number",
+      "category": null,
+      "default": -1.0
     },
     "Density Of Reservoir Fluid": {
       "description": "Density Of Water",
-      "type": "number",
       "units": "kg/km**3",
-      "category": null,
-      "default": -1.0,
       "minimum": 100000000000.0,
-      "maximum": 10000000000000.0
+      "maximum": 10000000000000.0,
+      "type": "number",
+      "category": null,
+      "default": -1.0
     },
     "Density Of Reservoir Rock": {
       "description": "Density Of Rock",
-      "type": "number",
       "units": "kg/km**3",
-      "category": null,
-      "default": 2550000000000.0,
       "minimum": 100000000000.0,
-      "maximum": 10000000000000.0
+      "maximum": 10000000000000.0,
+      "type": "number",
+      "category": null,
+      "default": 2550000000000.0
     },
     "Rock Recoverable Heat": {
       "description": "percent of heat that is recoverable from the rock in the reservoir 0.66 for high-T reservoirs, 0.43 for low-T reservoirs (Garg and Combs (2011)",
-      "type": "number",
       "units": "",
-      "category": null,
-      "default": -1.0,
       "minimum": 0.0,
-      "maximum": 1.0
+      "maximum": 1.0,
+      "type": "number",
+      "category": null,
+      "default": -1.0
     },
     "Fluid Recoverable Heat": {
       "description": "percent of heat that is recoverable from the fluid in the reservoir 0.66 for high-T reservoirs, 0.43 for low-T reservoirs (Garg and Combs (2011)",
-      "type": "number",
       "units": "",
-      "category": null,
-      "default": -1.0,
       "minimum": 0.0,
-      "maximum": 1.0
+      "maximum": 1.0,
+      "type": "number",
+      "category": null,
+      "default": -1.0
     },
     "Recoverable Fluid Factor": {
       "description": "percent of fluid that is recoverable from the reservoir (0.5 = 50%)",
-      "type": "number",
       "units": "",
-      "category": null,
-      "default": 0.5,
       "minimum": 0.0,
-      "maximum": 1.0
+      "maximum": 1.0,
+      "type": "number",
+      "category": null,
+      "default": 0.5
     },
     "Reservoir Depth": {
       "description": "depth to top of reservoir (km). Calculated based on an assumed gradient and the reservoir temperature if no value given",
-      "type": "number",
       "units": "kilometer",
-      "category": null,
-      "default": -1.0,
       "minimum": 0.001,
-      "maximum": 15.0
+      "maximum": 15.0,
+      "type": "number",
+      "category": null,
+      "default": -1.0
     },
     "Reservoir Pressure": {
       "description": "pressure of the of reservoir (in MPa). Calculated assuming hydrostatic pressure and reservoir depth & water density if no value given",
-      "type": "number",
       "units": "MPa",
-      "category": null,
-      "default": -1.0,
       "minimum": 0.0,
-      "maximum": 10000.0
+      "maximum": 10000.0,
+      "type": "number",
+      "category": null,
+      "default": -1.0
     },
     "Recoverable Heat from Rock": {
       "description": "percent of heat that is recoverable from the rock (0.75 = 75%)",
-      "type": "number",
       "units": "",
-      "category": null,
-      "default": 0.75,
       "minimum": 0.0,
-      "maximum": 1.0
+      "maximum": 1.0,
+      "type": "number",
+      "category": null,
+      "default": 0.75
     },
     "HTML Output File": {
       "description": "Provide a HTML output name if you want to have HTML output (no output if not provided)",
-      "type": "string",
       "units": null,
-      "category": null,
-      "default": "HIP.html",
       "minimum": null,
-      "maximum": null
+      "maximum": null,
+      "type": "string",
+      "category": null,
+      "default": "HIP.html"
     }
   }
 }

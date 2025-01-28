@@ -99,29 +99,37 @@ class GeophiresXSchemaGenerator:
     def generate_json_schema(self) -> dict:
         input_params_json, output_params_json = self.get_parameters_json()
         input_params = json.loads(input_params_json)
+        return self._generate_json_schema_for_params(input_params)
 
+    def _generate_json_schema_for_params(self, params: dict) -> dict:
         properties = {}
         required = []
 
-        for param_name in input_params:
-            param = input_params[param_name]
+        for param_name in params:
+            param = params[param_name]
 
             units_val = param['CurrentUnits'] if isinstance(param['CurrentUnits'], str) else None
             min_val, max_val = _get_min_and_max(param, default_val=None)
             properties[param_name] = {
                 'description': param['ToolTipText'],
-                'type': param['json_parameter_type'],
                 'units': units_val,
-                'category': param['parameter_category'],
-                'default': _fix_floating_point_error(param['DefaultValue']),
                 'minimum': min_val,
                 'maximum': max_val,
             }
 
-            if param['Required']:
+            if 'json_parameter_type' in param:
+                properties[param_name]['type'] = param['json_parameter_type']
+
+            if 'parameter_category' in param:
+                properties[param_name]['category'] = param['parameter_category']
+
+            if 'DefaultValue' in param:
+                properties[param_name]['default'] = _fix_floating_point_error(param['DefaultValue'])
+
+            if param.get('Required'):
                 required.append(param_name)
 
-            if param['ValuesEnum']:
+            if param.get('ValuesEnum'):
                 properties[param_name]['enum_values'] = param['ValuesEnum']
 
         schema = {
@@ -259,6 +267,13 @@ def _fix_floating_point_error(val: Any) -> Any:
         return format(float(val), '.1f')
 
     return val
+
+
+class GeophiresXOutputSchemaGenerator(GeophiresXSchemaGenerator):
+    def generate_json_schema(self) -> dict:
+        input_params_json, output_params_json = self.get_parameters_json()
+        output_params = json.loads(output_params_json)
+        return self._generate_json_schema_for_params(output_params)
 
 
 class HipRaXSchemaGenerator(GeophiresXSchemaGenerator):

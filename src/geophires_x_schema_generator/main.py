@@ -2,6 +2,7 @@ import argparse
 import json
 from pathlib import Path
 
+from geophires_x_schema_generator import GeophiresXOutputSchemaGenerator
 from geophires_x_schema_generator import GeophiresXSchemaGenerator
 from geophires_x_schema_generator import HipRaXSchemaGenerator
 
@@ -29,12 +30,14 @@ if __name__ == '__main__':
             f.write(json.dumps(schema_json, indent=2))
             print(f'Wrote JSON schema file to {build_path}.')
 
-        rst = generator.generate_parameters_reference_rst()
+        if rst_file_name is not None:
+            rst = generator.generate_parameters_reference_rst()
 
-        build_path_rst = Path(build_dir, rst_file_name)
-        with open(build_path_rst, 'w') as f:
-            f.write(rst)
-            print(f'Wrote RST file to {build_path_rst}.')
+            build_path_rst = Path(build_dir, rst_file_name)
+            with open(build_path_rst, 'w') as f:
+                f.write(rst)
+                print(f'Wrote RST file to {build_path_rst}.')
 
     build('geophires-request.json', GeophiresXSchemaGenerator(), 'parameters.rst')
+    build('geophires-response.json', GeophiresXOutputSchemaGenerator(), None)
     build('hip-ra-x-request.json', HipRaXSchemaGenerator(), 'hip_ra_x_parameters.rst')
